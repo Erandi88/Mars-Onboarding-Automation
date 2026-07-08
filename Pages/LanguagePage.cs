@@ -1,0 +1,136 @@
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
+using SeleniumExtras.WaitHelpers;
+
+namespace qa_dotnet_cucumber.Pages
+{
+    public class LanguagePage
+    {
+        private readonly IWebDriver _driver;
+        private readonly WebDriverWait _wait;
+
+        private readonly By AddNewButton = By.XPath("//div[contains(@class,'active')]//div[contains(@class,'ui teal button') and normalize-space()='Add New']");
+        private readonly By LanguageField = By.XPath("//input[@placeholder='Add Language']");
+        private readonly By LanguageLevelDropdown = By.XPath("//select[@name='level']");
+        private readonly By AddButton = By.XPath("//input[@value='Add']");
+        private readonly By UpdateButton = By.XPath("//input[@value='Update']");
+
+        public LanguagePage(IWebDriver driver)
+        {
+            _driver = driver;
+            _wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(30));
+        }
+
+        public void ClickAddNewButton()
+        {
+            var addNewButton = _wait.Until(ExpectedConditions.ElementToBeClickable(AddNewButton));
+            addNewButton.Click();
+        }
+
+        public void EnterLanguage(string language)
+        {
+            var languageInput = _wait.Until(ExpectedConditions.ElementIsVisible(LanguageField));
+            languageInput.Clear();
+            languageInput.SendKeys(language);
+        }
+
+        public void SelectLanguageLevel(string level)
+        {
+            var dropdownElement = _wait.Until(ExpectedConditions.ElementIsVisible(LanguageLevelDropdown));
+            var selectElement = new SelectElement(dropdownElement);
+            selectElement.SelectByText(level);
+        }
+
+        public void ClickAddButton()
+        {
+            var addButton = _wait.Until(ExpectedConditions.ElementToBeClickable(AddButton));
+            addButton.Click();
+        }
+
+        public void AddLanguage(string language, string level)
+        {
+            ClickAddNewButton();
+            EnterLanguage(language);
+            SelectLanguageLevel(level);
+            ClickAddButton();
+        }
+
+        public bool IsLanguageDisplayed(string language)
+        {
+            try
+            {
+                var languageRow = By.XPath($"//td[normalize-space()='{language}']");
+                return _wait.Until(ExpectedConditions.ElementIsVisible(languageRow)).Displayed;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        //Builds the XPath for the correct language row
+        private By DeleteButtonForLanguage(string language)
+        {
+            return By.XPath($"//div[contains(@class,'active')]//td[normalize-space()='{language}']/following-sibling::td//i[contains(@class,'remove')]");
+
+        }
+
+        //Waits for that delete icon and clicks it
+        public void DeleteLanguage(string language)
+        {
+            var deleteButton = _wait.Until(ExpectedConditions.ElementToBeClickable(DeleteButtonForLanguage(language)));
+            deleteButton.Click();
+        }
+
+        //Check the language removed from the table
+        public bool IsLanguageRemoved(string language)
+        {
+            try
+            {
+               
+                var languageRow = By.XPath($"//div[contains(@class,'active')]//td[normalize-space()='{language}']");
+                _wait.Until(ExpectedConditions.InvisibilityOfElementLocated(languageRow));
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private By EditButtonForLanguage(string language)
+        {
+            return By.XPath($"//div[contains(@class,'active')]//td[normalize-space()='{language}']/following-sibling::td//i[contains(@class,'write')]");
+            
+        }
+
+        public void ClickEditLanguage(string language)
+        {
+            var editButton = _wait.Until(ExpectedConditions.ElementToBeClickable(EditButtonForLanguage(language)));
+            editButton.Click();
+        }
+
+        public void ClickUpdateButton()
+        {
+            var updateButton = _wait.Until(ExpectedConditions.ElementToBeClickable(UpdateButton));
+            updateButton.Click();
+        }
+
+        public void EditLanguage(string currentLanguage, string newLanguage, string newLevel)
+        {
+            ClickEditLanguage(currentLanguage);
+            EnterLanguage(newLanguage);
+            SelectLanguageLevel(newLevel);
+            ClickUpdateButton();
+        }
+
+        public void DeleteLanguageIfExists(string language)
+        {
+            if (IsLanguageDisplayed(language))
+            {
+                DeleteLanguage(language);
+            }
+        }
+
+    }
+}
