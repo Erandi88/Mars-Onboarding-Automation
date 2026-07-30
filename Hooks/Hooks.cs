@@ -37,6 +37,7 @@ namespace qa_dotnet_cucumber.Hooks
             string json = File.ReadAllText(settingsPath);
             _settings = JsonSerializer.Deserialize<TestSettings>(json);
 
+
             // Get project root by navigating up from bin/Debug/net8.0
             string projectRoot = Path.GetFullPath(Path.Combine(currentDir, "..", ".."));
             string reportFileName = _settings.Report.Path.TrimStart('/'); // e.g., "TestReport.html"
@@ -55,7 +56,7 @@ namespace qa_dotnet_cucumber.Hooks
         {
             Console.WriteLine($"Starting {scenarioContext.ScenarioInfo.Title} on Thread {Thread.CurrentThread.ManagedThreadId} at {DateTime.Now}");
             // Let Selenium Manager handle the correct ChromeDriver version
-            new DriverManager().SetUpDriver(new ChromeConfig());
+            //new DriverManager().SetUpDriver(new ChromeConfig());
             var chromeOptions = new ChromeOptions();
             if (_settings.Browser.Headless)
             {
