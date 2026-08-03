@@ -38,23 +38,31 @@ namespace qa_dotnet_cucumber.Steps
             _loginPage.Login(_email, _password);
         }
 
-        [When("I add a new language with valid details")]
-        public void WhenIAddANewLanguageWithValidDetails()
+        [When(@"I add the language ""(.*)"" with level ""(.*)""")]
+        public void WhenIAddTheLanguageWithLevel(string language, string level)
         {
-            DeleteLanguageIfExists();
+            _languagePage.DeleteLanguageIfExists(language);
 
-            _languagePage.AddLanguage(_language, _level);
+            Assert.That(
+                _languagePage.IsLanguageDisplayed(language),
+                Is.False,
+                $"The language '{language}' should not exist before the test starts."
+            );
+
+            _languagePage.AddLanguage(language, level);
         }
 
-        [Then("the language should be displayed in the language list")]
-        public void ThenTheLanguageShouldBeDisplayedInTheLanguageList()
+        [Then(@"the language ""(.*)"" should be displayed with level ""(.*)""")]
+        public void ThenTheLanguageWithLevelShouldBeDisplayed(string language, string level)
         {
             Assert.That(
-                _languagePage.IsLanguageDisplayed(_language),
+                _languagePage.IsLanguageAndLevelDisplayed(language, level),
                 Is.True,
-                "The added language should be displayed in the language list."
+                $"The language '{language}' should be displayed with level '{level}'."
             );
         }
+
+
 
 
         [Given("a language exists in the language list")]

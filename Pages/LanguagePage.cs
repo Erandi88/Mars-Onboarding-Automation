@@ -68,6 +68,26 @@ namespace qa_dotnet_cucumber.Pages
             }
         }
 
+        public bool IsLanguageAndLevelDisplayed(string language, string level)
+        {
+            try
+            {
+                var languageRow = By.XPath(
+                    $"//div[contains(@class,'active')]//tr[" +
+                    $"td[normalize-space()='{language}'] and " +
+                    $"td[normalize-space()='{level}']]"
+                );
+
+                return _wait
+                    .Until(ExpectedConditions.ElementIsVisible(languageRow))
+                    .Displayed;
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+        }
+
         //Builds the XPath for the correct language row
         private By DeleteButtonForLanguage(string language)
         {
@@ -129,6 +149,13 @@ namespace qa_dotnet_cucumber.Pages
             if (IsLanguageDisplayed(language))
             {
                 DeleteLanguage(language);
+
+                if (!IsLanguageRemoved(language))
+                {
+                    throw new WebDriverTimeoutException(
+                        $"The language '{language}' was not removed during cleanup."
+                    );
+                }
             }
         }
 

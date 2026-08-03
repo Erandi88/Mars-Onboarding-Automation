@@ -6,9 +6,13 @@ Feature: Language Management
 Background:
     Given I am logged in to Mars
 
-Scenario: Add language with valid details
-    When I add a new language with valid details
-    Then the language should be displayed in the language list
+Scenario Outline: Add language with valid details
+    When I add the language "<Language>" with level "<Level>"
+    Then the language "<Language>" should be displayed with level "<Level>"
+
+Examples:
+    | Language    | Level  |
+    | AutoEnglish | Fluent |
 
 Scenario: Delete an existing language
     Given a language exists in the language list
