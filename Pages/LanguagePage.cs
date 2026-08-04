@@ -158,5 +158,35 @@ namespace qa_dotnet_cucumber.Pages
             }
         }
 
+
+        public bool IsDuplicateLanguageMessageDisplayed()
+        {
+            try
+            {
+                var duplicateMessage = By.XPath(
+                    "//*[normalize-space()='This language is already exist in your language list.']"
+                );
+
+                return _wait
+                    .Until(ExpectedConditions.ElementIsVisible(duplicateMessage))
+                    .Displayed;
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+        }
+
+        public int GetLanguageRecordCount(string language, string level)
+        {
+            var matchingRows = By.XPath(
+                $"//div[contains(@class,'active')]//tr[" +
+                $"td[normalize-space()='{language}'] and " +
+                $"td[normalize-space()='{level}']]"
+            );
+
+            return _driver.FindElements(matchingRows).Count;
+        }
+
     }
 }

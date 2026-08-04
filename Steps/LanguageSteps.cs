@@ -119,17 +119,32 @@ namespace qa_dotnet_cucumber.Steps
             _testDataContext.CreatedLanguages.Add(newLanguage);
         }
 
-       /* [Then("the updated language should be displayed in the language list")]
-        public void ThenTheUpdatedLanguageShouldBeDisplayedInTheLanguageList()
+
+        [When(@"I try to add the language ""(.*)"" with level ""(.*)"" again")]
+        public void WhenITryToAddTheLanguageAgain(string language, string level)
+        {
+            _languagePage.AddLanguage(language, level);
+        }
+
+        [Then(@"only one ""(.*)"" with level ""(.*)"" should exist")]
+        public void ThenOnlyOneLanguageWithLevelShouldExist(string language,string level)
         {
             Assert.That(
-                _languagePage.IsLanguageDisplayed(_updatedLanguage),
-                Is.True,
-                "The updated language should be displayed in the language list."
+                _languagePage.GetLanguageRecordCount(language, level),
+                Is.EqualTo(1),
+                $"Only one '{language}' record with level '{level}' should exist."
             );
-        }*/
+        }
 
-
+        [Then("the duplicate language message should be displayed")]
+        public void ThenTheDuplicateLanguageMessageShouldBeDisplayed()
+        {
+            Assert.That(
+                _languagePage.IsDuplicateLanguageMessageDisplayed(),
+                Is.True,
+                "The duplicate language validation message should be displayed."
+            );
+        }
         private void LoadCredentialsFromSettings()
         {
             string json = File.ReadAllText("settings.json");
@@ -142,10 +157,6 @@ namespace qa_dotnet_cucumber.Steps
             _password = credentials.GetProperty("Password").GetString() ?? string.Empty;
         }
 
-       /* private void DeleteLanguageIfExists()
-        {
-            _languagePage.DeleteLanguageIfExists(_language);
-            _languagePage.DeleteLanguageIfExists(_updatedLanguage);
-        }*/
+       
     }
 }

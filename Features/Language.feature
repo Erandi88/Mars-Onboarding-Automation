@@ -13,6 +13,9 @@ Scenario Outline: Add language with valid details
 Examples:
     | Language    | Level  |
     | AutoEnglish | Fluent |
+    | AutoFrench | Basic |
+    | AutoHindi | Conversational |
+    | AutoGerman | Fluent |
 
 
 Scenario Outline: Delete an existing language
@@ -33,3 +36,14 @@ Scenario Outline: Edit an existing language
 Examples:
     | CurrentLanguage | CurrentLevel | NewLanguage | NewLevel          |
     | AutoSpanish     | Conversational | AutoGerman | Native/Bilingual |
+
+
+Scenario Outline: Add a duplicate language
+    Given the language "<Language>" with level "<Level>" exists
+    When I try to add the language "<Language>" with level "<Level>" again
+    Then only one "<Language>" with level "<Level>" should exist
+    And the duplicate language message should be displayed
+
+Examples:
+    | Language   | Level   |
+    | AutoItalian| Fluent  |
