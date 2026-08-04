@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using qa_dotnet_cucumber.Contexts;
 using qa_dotnet_cucumber.Pages;
-using qa_dotnet_cucumber.Contexts;
 using Reqnroll;
 using System.Text.Json;
 
@@ -71,29 +70,38 @@ namespace qa_dotnet_cucumber.Steps
 
 
 
-        [Given("a language exists in the language list")]
-        public void GivenALanguageExistsInTheLanguageList()
+        [Given(@"the language ""(.*)"" with level ""(.*)"" exists")]
+        public void GivenTheLanguageWithLevelExists(string language, string level)
         {
-            if (!_languagePage.IsLanguageDisplayed(_language))
-            {
-                _languagePage.AddLanguage(_language, _level);
-            }
+            _languagePage.DeleteLanguageIfExists(language);
+
+            _languagePage.AddLanguage(language, level);
+
+            _testDataContext.CreatedLanguages.Add(language);
+
+            Assert.That(
+                _languagePage.IsLanguageAndLevelDisplayed(language, level),
+                Is.True,
+                $"The language '{language}' with level '{level}' should exist before deletion."
+            );
         }
 
-        [When("I delete the language")]
-        public void WhenIDeleteTheLanguage()
+        [When(@"I delete the language ""(.*)""")]
+        public void WhenIDeleteTheLanguage(string language)
         {
-            _languagePage.DeleteLanguage(_language);
+            _languagePage.DeleteLanguage(language);
         }
 
-        [Then("the language should be removed from the language list")]
-        public void ThenTheLanguageShouldBeRemovedFromTheLanguageList()
+        [Then(@"the language ""(.*)"" should be removed from the language list")]
+        public void ThenTheLanguageShouldBeRemovedFromTheLanguageList(string language)
         {
             Assert.That(
-                _languagePage.IsLanguageRemoved(_language),
+                _languagePage.IsLanguageRemoved(language),
                 Is.True,
-                "The language should be removed from the language list."
+                $"The language '{language}' should be removed from the language list."
             );
+
+            _testDataContext.CreatedLanguages.Remove(language);
         }
 
         [When("I edit the language with new valid details")]
