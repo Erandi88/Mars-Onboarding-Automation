@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
+using qa_dotnet_cucumber.Contexts;
 using qa_dotnet_cucumber.Pages;
+using qa_dotnet_cucumber.Contexts;
 using Reqnroll;
 using System.Text.Json;
 
@@ -11,6 +13,7 @@ namespace qa_dotnet_cucumber.Steps
         private readonly LoginPage _loginPage;
         private readonly LanguagePage _languagePage;
         private readonly NavigationHelper _navigationHelper;
+        private readonly TestDataContext _testDataContext;
 
         private string _email = string.Empty;
         private string _password = string.Empty;
@@ -21,11 +24,12 @@ namespace qa_dotnet_cucumber.Steps
         private readonly string _updatedLanguage = "AutomationFrench";
         private readonly string _updatedLevel = "Native/Bilingual";
 
-        public LanguageSteps(LoginPage loginPage, LanguagePage languagePage, NavigationHelper navigationHelper)
+        public LanguageSteps(LoginPage loginPage, LanguagePage languagePage, NavigationHelper navigationHelper, TestDataContext testDataContext)
         {
             _loginPage = loginPage;
             _languagePage = languagePage;
             _navigationHelper = navigationHelper;
+            _testDataContext = testDataContext;
         }
 
         [Given("I am logged in to Mars")]
@@ -50,6 +54,8 @@ namespace qa_dotnet_cucumber.Steps
             );
 
             _languagePage.AddLanguage(language, level);
+
+            _testDataContext.CreatedLanguages.Add(language);
         }
 
         [Then(@"the language ""(.*)"" should be displayed with level ""(.*)""")]

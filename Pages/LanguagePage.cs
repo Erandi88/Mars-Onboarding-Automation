@@ -73,14 +73,13 @@ namespace qa_dotnet_cucumber.Pages
             try
             {
                 var languageRow = By.XPath(
-                    $"//div[contains(@class,'active')]//tr[" +
+                    $"//div[contains(@class,'active')]//tr[" + 
                     $"td[normalize-space()='{language}'] and " +
                     $"td[normalize-space()='{level}']]"
                 );
 
                 return _wait
-                    .Until(ExpectedConditions.ElementIsVisible(languageRow))
-                    .Displayed;
+                    .Until(ExpectedConditions.ElementIsVisible(languageRow)).Displayed;
             }
             catch (WebDriverTimeoutException)
             {

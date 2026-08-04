@@ -10,6 +10,8 @@ using System.IO;
 using System.Text.Json;
 using qa_dotnet_cucumber.Config;
 using qa_dotnet_cucumber.Pages;
+using qa_dotnet_cucumber.Contexts;
+
 namespace qa_dotnet_cucumber.Hooks
 {
     [Binding]
@@ -71,6 +73,7 @@ namespace qa_dotnet_cucumber.Hooks
             _objectContainer.RegisterInstanceAs(new LoginPage(driver));
             _objectContainer.RegisterInstanceAs(new LanguagePage(driver));
             _objectContainer.RegisterInstanceAs(new SkillPage(driver));
+            _objectContainer.RegisterInstanceAs(new TestDataContext());
 
             lock (_reportLock)
             {
@@ -107,8 +110,26 @@ namespace qa_dotnet_cucumber.Hooks
         public void AfterScenario()
         {
             var driver = _objectContainer.Resolve<IWebDriver>();
-            driver?.Quit();
-            Console.WriteLine($"Finished scenario on Thread {Thread.CurrentThread.ManagedThreadId} at {DateTime.Now}");
+
+            try
+            {
+                var languagePage = _objectContainer.Resolve<LanguagePage>();
+                var testDataContext = _objectContainer.Resolve<TestDataContext>();
+
+                foreach (string language in testDataContext.CreatedLanguages)
+                {
+                    languagePage.DeleteLanguageIfExists(language);
+                }
+            }
+            finally
+            {
+                driver.Quit();
+
+                Console.WriteLine(
+                    $"Finished scenario on Thread " +
+                    $"{Thread.CurrentThread.ManagedThreadId} at {DateTime.Now}"
+                );
+            }
         }
 
         [AfterTestRun]
