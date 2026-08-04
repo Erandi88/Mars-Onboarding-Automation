@@ -24,7 +24,12 @@ Examples:
     | Language    | Level  |
     | AutoFrench | Basic |
 
-Scenario: Edit an existing language
-    Given a language exists in the language list
-    When I edit the language with new valid details
-    Then the updated language should be displayed in the language list
+
+Scenario Outline: Edit an existing language
+    Given the language "<CurrentLanguage>" with level "<CurrentLevel>" exists
+    When I edit the language "<CurrentLanguage>" to "<NewLanguage>" with level "<NewLevel>"
+    Then the language "<NewLanguage>" should be displayed with level "<NewLevel>"
+
+Examples:
+    | CurrentLanguage | CurrentLevel | NewLanguage | NewLevel          |
+    | AutoSpanish     | Conversational | AutoGerman | Native/Bilingual |

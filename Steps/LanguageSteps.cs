@@ -17,11 +17,11 @@ namespace qa_dotnet_cucumber.Steps
         private string _email = string.Empty;
         private string _password = string.Empty;
 
-        private readonly string _language = "AutomationEnglish";
-        private readonly string _level = "Fluent";
+        //private readonly string _language = "AutomationEnglish";
+        //private readonly string _level = "Fluent";
 
-        private readonly string _updatedLanguage = "AutomationFrench";
-        private readonly string _updatedLevel = "Native/Bilingual";
+        //private readonly string _updatedLanguage = "AutomationFrench";
+        //private readonly string _updatedLevel = "Native/Bilingual";
 
         public LanguageSteps(LoginPage loginPage, LanguagePage languagePage, NavigationHelper navigationHelper, TestDataContext testDataContext)
         {
@@ -82,7 +82,7 @@ namespace qa_dotnet_cucumber.Steps
             Assert.That(
                 _languagePage.IsLanguageAndLevelDisplayed(language, level),
                 Is.True,
-                $"The language '{language}' with level '{level}' should exist before deletion."
+                $"The language '{language}' with level '{level}' should exist before the scenario action."
             );
         }
 
@@ -104,13 +104,22 @@ namespace qa_dotnet_cucumber.Steps
             _testDataContext.CreatedLanguages.Remove(language);
         }
 
-        [When("I edit the language with new valid details")]
-        public void WhenIEditTheLanguageWithNewValidDetails()
+        [When(@"I edit the language ""(.*)"" to ""(.*)"" with level ""(.*)""")]
+        public void WhenIEditTheLanguage( string currentLanguage, string newLanguage, string newLevel)
         {
-            _languagePage.EditLanguage(_language, _updatedLanguage, _updatedLevel);
+            _languagePage.DeleteLanguageIfExists(newLanguage);
+
+            _languagePage.EditLanguage(
+                currentLanguage,
+                newLanguage,
+                newLevel
+            );
+
+            _testDataContext.CreatedLanguages.Remove(currentLanguage);
+            _testDataContext.CreatedLanguages.Add(newLanguage);
         }
 
-        [Then("the updated language should be displayed in the language list")]
+       /* [Then("the updated language should be displayed in the language list")]
         public void ThenTheUpdatedLanguageShouldBeDisplayedInTheLanguageList()
         {
             Assert.That(
@@ -118,7 +127,7 @@ namespace qa_dotnet_cucumber.Steps
                 Is.True,
                 "The updated language should be displayed in the language list."
             );
-        }
+        }*/
 
 
         private void LoadCredentialsFromSettings()
@@ -133,10 +142,10 @@ namespace qa_dotnet_cucumber.Steps
             _password = credentials.GetProperty("Password").GetString() ?? string.Empty;
         }
 
-        private void DeleteLanguageIfExists()
+       /* private void DeleteLanguageIfExists()
         {
             _languagePage.DeleteLanguageIfExists(_language);
             _languagePage.DeleteLanguageIfExists(_updatedLanguage);
-        }
+        }*/
     }
 }
