@@ -6,6 +6,7 @@ Feature: Language Management
 Background:
     Given I am logged in to Mars
 
+@positive
 Scenario Outline: Add language with valid details
     When I add the language "<Language>" with level "<Level>"
     Then the language "<Language>" should be displayed with level "<Level>"
@@ -17,7 +18,7 @@ Examples:
     | AutoHindi | Conversational |
     | AutoGerman | Fluent |
 
-
+@positive
 Scenario Outline: Delete an existing language
     Given the language "<Language>" with level "<Level>" exists
     When I delete the language "<Language>"
@@ -27,7 +28,7 @@ Examples:
     | Language    | Level  |
     | AutoFrench | Basic |
 
-
+@positive
 Scenario Outline: Edit an existing language
     Given the language "<CurrentLanguage>" with level "<CurrentLevel>" exists
     When I edit the language "<CurrentLanguage>" to "<NewLanguage>" with level "<NewLevel>"
@@ -37,7 +38,7 @@ Examples:
     | CurrentLanguage | CurrentLevel | NewLanguage | NewLevel          |
     | AutoSpanish     | Conversational | AutoGerman | Native/Bilingual |
 
-
+@negative @validinput
 Scenario Outline: Add a duplicate language
     Given the language "<Language>" with level "<Level>" exists
     When I try to add the language "<Language>" with level "<Level>" again
@@ -47,3 +48,14 @@ Scenario Outline: Add a duplicate language
 Examples:
     | Language   | Level   |
     | AutoItalian| Fluent  |
+
+
+@negative @invalidinput
+Scenario Outline: Add a language with an empty language field
+    When I try to add a language with an empty language field and level "<Level>"
+    Then the language validation message should be displayed
+    And no language record should be created
+
+Examples:
+| Level |
+| Basic |

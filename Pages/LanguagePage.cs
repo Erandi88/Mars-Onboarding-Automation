@@ -188,5 +188,33 @@ namespace qa_dotnet_cucumber.Pages
             return _driver.FindElements(matchingRows).Count;
         }
 
+        // returns the current number of language records.
+        public int GetLanguageRowCount()
+        {
+            var languageRows = By.XPath(
+                "//div[contains(@class,'active')]//table/tbody/tr"
+            );
+
+            return _driver.FindElements(languageRows).Count;
+        }
+
+        public bool IsLanguageValidationMessageDisplayed()
+        {
+            try
+            {
+                var validationMessage = By.XPath(
+                    "//*[normalize-space()='Please enter language and level']"
+                );
+
+                return _wait
+                    .Until(ExpectedConditions.ElementIsVisible(validationMessage))
+                    .Displayed;
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+        }
+
     }
 }

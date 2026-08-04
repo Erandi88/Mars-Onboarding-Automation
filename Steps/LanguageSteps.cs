@@ -145,6 +145,35 @@ namespace qa_dotnet_cucumber.Steps
                 "The duplicate language validation message should be displayed."
             );
         }
+
+        [When(@"I try to add a language with an empty language field and level ""(.*)""")]
+        public void WhenITryToAddALanguageWithAnEmptyLanguageField(string level)
+        {
+            //Remember current row count
+            _testDataContext.LanguageRowCountBeforeAction = _languagePage.GetLanguageRowCount();
+
+            _languagePage.AddLanguage(string.Empty, level);
+        }
+
+        [Then("the language validation message should be displayed")]
+        public void ThenTheLanguageValidationMessageShouldBeDisplayed()
+        {
+            Assert.That(_languagePage.IsLanguageValidationMessageDisplayed(), Is.True,
+                "The validation message should be displayed for an empty language field."
+            );
+        }
+
+        [Then("no language record should be created")]
+        public void ThenNoNewLanguageRecordShouldBeCreated()
+        {
+            int currentRowCount = _languagePage.GetLanguageRowCount();
+
+            Assert.That(
+                currentRowCount,
+                Is.EqualTo(_testDataContext.LanguageRowCountBeforeAction),
+                "The number of language records should remain unchanged after an invalid submission."
+            );
+        }
         private void LoadCredentialsFromSettings()
         {
             string json = File.ReadAllText("settings.json");
