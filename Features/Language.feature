@@ -18,6 +18,8 @@ Examples:
     | AutoHindi | Conversational |
     | AutoGerman | Fluent |
 
+
+
 @positive
 Scenario Outline: Delete an existing language
     Given the language "<Language>" with level "<Level>" exists
@@ -28,6 +30,8 @@ Examples:
     | Language    | Level  |
     | AutoFrench | Basic |
 
+
+
 @positive
 Scenario Outline: Edit an existing language
     Given the language "<CurrentLanguage>" with level "<CurrentLevel>" exists
@@ -37,6 +41,8 @@ Scenario Outline: Edit an existing language
 Examples:
     | CurrentLanguage | CurrentLevel | NewLanguage | NewLevel          |
     | AutoSpanish     | Conversational | AutoGerman | Native/Bilingual |
+
+
 
 @negative @validinput
 Scenario Outline: Add a duplicate language
@@ -50,6 +56,21 @@ Examples:
     | AutoItalian| Fluent  |
 
 
+
+@negative @validinput
+Scenario Outline: Add the same language with a different level
+    Given the language "<Language>" with level "<CurrentLevel>" exists
+    When I try to add the language "<Language>" with level "<NewLevel>" again
+    Then only one record for the language "<Language>" should exist
+    And the language "<Language>" should be displayed with level "<CurrentLevel>"
+    And the duplicated data message should be displayed
+
+Examples:
+    | Language     | CurrentLevel | NewLevel |
+    | AutoJapanese | Basic        | Conversational |
+
+
+
 @negative @invalidinput
 Scenario Outline: Add a language with an empty language field
     When I try to add a language with an empty language field and level "<Level>"
@@ -59,6 +80,8 @@ Scenario Outline: Add a language with an empty language field
 Examples:
     | Level |
     | Basic |
+
+
 
 @negative @invalidinput
 Scenario Outline: Add a language with an empty level field

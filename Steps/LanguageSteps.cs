@@ -92,6 +92,7 @@ namespace qa_dotnet_cucumber.Steps
             _languagePage.DeleteLanguage(language);
         }
 
+
         [Then(@"the language ""(.*)"" should be removed from the language list")]
         public void ThenTheLanguageShouldBeRemovedFromTheLanguageList(string language)
         {
@@ -109,11 +110,7 @@ namespace qa_dotnet_cucumber.Steps
         {
             _languagePage.DeleteLanguageIfExists(newLanguage);
 
-            _languagePage.EditLanguage(
-                currentLanguage,
-                newLanguage,
-                newLevel
-            );
+            _languagePage.EditLanguage(currentLanguage,newLanguage, newLevel);
 
             _testDataContext.CreatedLanguages.Remove(currentLanguage);
             _testDataContext.CreatedLanguages.Add(newLanguage);
@@ -146,6 +143,7 @@ namespace qa_dotnet_cucumber.Steps
             );
         }
 
+
         [When(@"I try to add a language with an empty language field and level ""(.*)""")]
         public void WhenITryToAddALanguageWithAnEmptyLanguageField(string level)
         {
@@ -155,6 +153,7 @@ namespace qa_dotnet_cucumber.Steps
             _languagePage.AddLanguage(string.Empty, level);
         }
 
+
         [Then("the language validation message should be displayed")]
         public void ThenTheLanguageValidationMessageShouldBeDisplayed()
         {
@@ -162,6 +161,7 @@ namespace qa_dotnet_cucumber.Steps
                 "The validation message should be displayed for an empty language field."
             );
         }
+
 
         [Then("no language record should be created")]
         public void ThenNoNewLanguageRecordShouldBeCreated()
@@ -175,6 +175,7 @@ namespace qa_dotnet_cucumber.Steps
             );
         }
 
+
         [When(@"I try to add the language ""(.*)"" with an empty level")]
         public void WhenITryToAddALanguageWithAnEmptyLevel(string language)
         {
@@ -183,6 +184,27 @@ namespace qa_dotnet_cucumber.Steps
 
             _languagePage.AddLanguageWithoutLevel(language);
         }
+
+        [Then(@"only one record for the language ""(.*)"" should exist")]
+        public void ThenOnlyOneRecordForTheLanguageShouldExist(string language)
+        {
+            Assert.That(
+                _languagePage.GetLanguageRecordCount(language),
+                Is.EqualTo(1),
+                $"Only one record for the language '{language}' should exist."
+            );
+        }
+
+        [Then("the duplicated data message should be displayed")]
+        public void ThenTheDuplicatedDataMessageShouldBeDisplayed()
+        {
+            Assert.That(
+                _languagePage.IsDuplicatedDataMessageDisplayed(),
+                Is.True,
+                "The duplicated data validation message should be displayed."
+            );
+        }
+
         private void LoadCredentialsFromSettings()
         {
             string json = File.ReadAllText("settings.json");
