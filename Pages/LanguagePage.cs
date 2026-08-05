@@ -251,5 +251,19 @@ namespace qa_dotnet_cucumber.Pages
             }
         }
 
+        public bool IsAddNewButtonAvailable()
+        {
+            try
+            {
+                return _wait
+                    .Until(ExpectedConditions.ElementToBeClickable(AddNewButton))
+                    .Displayed;
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+        }
+
     }
 }

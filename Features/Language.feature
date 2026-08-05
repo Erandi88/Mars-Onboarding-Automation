@@ -92,3 +92,14 @@ Scenario Outline: Add a language with an empty level field
 Examples:
     | Language   |
     | AutoFrench |
+
+
+@destructive
+Scenario Outline: Add a language with a very large input
+    When I add a language containing "<CharacterCount>" characters with level "<Level>"
+    Then the very large language should be displayed with level "<Level>"
+    And the application should remain responsive
+
+Examples:
+    | CharacterCount | Level |
+    | 500            | Basic |

@@ -11,5 +11,7 @@ namespace qa_dotnet_cucumber.Contexts
         public List<string> CreatedLanguages { get; } = new List<string>();
 
         public int LanguageRowCountBeforeAction { get; set; }
+
+        public string CurrentLanguage { get; set; } = string.Empty;
     }
 }

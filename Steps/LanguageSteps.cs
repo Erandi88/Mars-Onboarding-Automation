@@ -205,6 +205,43 @@ namespace qa_dotnet_cucumber.Steps
             );
         }
 
+        [When(@"I add a language containing ""(.*)"" characters with level ""(.*)""")]
+        public void WhenIAddALanguageContainingCharacters(int characterCount,string level)
+        {
+            string longLanguage = new string('A', characterCount);
+
+            _languagePage.DeleteLanguageIfExists(longLanguage);
+
+            _languagePage.AddLanguage(longLanguage, level);
+
+            _testDataContext.CreatedLanguages.Add(longLanguage);
+            _testDataContext.CurrentLanguage = longLanguage;
+        }
+
+        [Then(@"the very large language should be displayed with level ""(.*)""")]
+        public void ThenTheVeryLargeLanguageShouldBeDisplayedWithLevel(string level)
+        {
+            Assert.That(
+                _languagePage.IsLanguageAndLevelDisplayed(
+                    _testDataContext.CurrentLanguage,
+                    level),
+                Is.True,
+                $"The language containing " +
+                $"{_testDataContext.CurrentLanguage.Length} characters " +
+                $"should be displayed with level '{level}'."
+            );
+        }
+
+        [Then("the application should remain responsive")]
+        public void ThenTheApplicationShouldRemainResponsive()
+        {
+            Assert.That(
+                _languagePage.IsAddNewButtonAvailable(),
+                Is.True,
+                "The Languages section should remain responsive after adding a very large language."
+            );
+        }
+
         private void LoadCredentialsFromSettings()
         {
             string json = File.ReadAllText("settings.json");
