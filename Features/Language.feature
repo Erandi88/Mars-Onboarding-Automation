@@ -57,5 +57,15 @@ Scenario Outline: Add a language with an empty language field
     And no language record should be created
 
 Examples:
-| Level |
-| Basic |
+    | Level |
+    | Basic |
+
+@negative @invalidinput
+Scenario Outline: Add a language with an empty level field
+    When I try to add the language "<Language>" with an empty level
+    Then the language validation message should be displayed
+    And no language record should be created
+
+Examples:
+    | Language   |
+    | AutoFrench |

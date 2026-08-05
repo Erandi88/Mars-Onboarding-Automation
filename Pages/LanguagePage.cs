@@ -55,6 +55,13 @@ namespace qa_dotnet_cucumber.Pages
             ClickAddButton();
         }
 
+        public void AddLanguageWithoutLevel(string language)
+        {
+            ClickAddNewButton();
+            EnterLanguage(language);
+            ClickAddButton();
+        }
+
         public bool IsLanguageDisplayed(string language)
         {
             try

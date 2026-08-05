@@ -174,6 +174,15 @@ namespace qa_dotnet_cucumber.Steps
                 "The number of language records should remain unchanged after an invalid submission."
             );
         }
+
+        [When(@"I try to add the language ""(.*)"" with an empty level")]
+        public void WhenITryToAddALanguageWithAnEmptyLevel(string language)
+        {
+            //Remember current row count
+            _testDataContext.LanguageRowCountBeforeAction = _languagePage.GetLanguageRowCount();
+
+            _languagePage.AddLanguageWithoutLevel(language);
+        }
         private void LoadCredentialsFromSettings()
         {
             string json = File.ReadAllText("settings.json");
