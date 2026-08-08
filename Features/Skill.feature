@@ -17,12 +17,26 @@ Examples:
     | Skill           | Level    |
     | AutoTestingSkill | Beginner |
 
-Scenario: Delete an existing skill
-    Given a skill exists in the skill list
-    When I delete the skill
-    Then the skill should be removed from the skill list
 
-Scenario: Edit an existing skill
-    Given a skill exists in the skill list
-    When I edit the skill with new valid details
-    Then the updated skill should be displayed in the skill list
+
+@positive
+Scenario Outline: Edit an existing skill with valid details
+    Given the skill "<Skill>" with level "<Level>" exists
+    When I update the skill "<Skill>" to "<UpdatedSkill>" with level "<UpdatedLevel>"
+    Then the skill "<UpdatedSkill>" should be displayed with level "<UpdatedLevel>"
+
+Examples:
+    | Skill           | Level    | UpdatedSkill             | UpdatedLevel |
+    | AutoTestingSkill | Beginner | AutoCommunicationSkill   | Intermediate |
+
+
+
+@positive
+Scenario Outline: Delete an existing skill
+    Given the skill "<Skill>" with level "<Level>" exists
+    When I delete the skill "<Skill>"
+    Then the skill "<Skill>" should be removed from the skill list
+
+Examples:
+    | Skill           | Level        |
+    | AutoDeleteSkill | Intermediate |

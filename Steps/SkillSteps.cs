@@ -62,6 +62,7 @@ namespace qa_dotnet_cucumber.Steps
             _testDataContext.CreatedSkills.Add(skill);
         }
 
+        //reuse for add, edit
         [Then(@"the skill ""(.*)"" should be displayed with level ""(.*)""")]
         public void ThenTheSkillShouldBeDisplayedWithLevel(string skill,string level)
         {
@@ -71,6 +72,55 @@ namespace qa_dotnet_cucumber.Steps
                 $"The skill '{skill}' should be displayed " +
                 $"with level '{level}'."
             );
+        }
+
+
+        /* Edit an existing skill with valid details, edid, delete */
+
+        [Given(@"the skill ""(.*)"" with level ""(.*)"" exists")]
+        public void GivenTheSkillWithLevelExists(string skill, string level)
+        {
+            _skillPage.DeleteSkillIfExists(skill);
+
+            _skillPage.AddSkill(skill, level);
+
+            _testDataContext.CreatedSkills.Add(skill);
+
+            Assert.That(
+                _skillPage.IsSkillAndLevelDisplayed(skill, level),
+                Is.True,
+                $"The skill '{skill}' with level '{level}' should exist before the scenario action."
+            );
+        }
+
+        [When(@"I update the skill ""(.*)"" to ""(.*)"" with level ""(.*)""")]
+        public void WhenIUpdateTheSkill(string currentSkill,string updatedSkill, string updatedLevel)
+        {
+            _skillPage.DeleteSkillIfExists(updatedSkill);
+
+            _skillPage.EditSkill(currentSkill, updatedSkill,updatedLevel);
+
+            _testDataContext.CreatedSkills.Add(updatedSkill);
+        }
+
+        /* delete*/
+
+        [When(@"I delete the skill ""(.*)""")]
+        public void WhenIDeleteTheSkill(string skill)
+        {
+            _skillPage.DeleteSkill(skill);
+        }
+
+        [Then(@"the skill ""(.*)"" should be removed from the skill list")]
+        public void ThenTheSkillShouldBeRemovedFromTheSkillList(string skill)
+        {
+            Assert.That(
+                _skillPage.IsSkillRemoved(skill),
+                Is.True,
+                $"The skill '{skill}' should be removed from the skill list."
+            );
+
+            _testDataContext.CreatedSkills.Remove(skill);
         }
 
 

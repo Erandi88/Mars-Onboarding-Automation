@@ -88,25 +88,12 @@ namespace qa_dotnet_cucumber.Pages
 
         public void DeleteSkill(string skill)
         {
-            var deleteButton = _wait.Until(ExpectedConditions.ElementToBeClickable(DeleteButtonForSkill(skill)));
+            var deleteButton = _wait.Until(ExpectedConditions.ElementToBeClickable( DeleteButtonForSkill(skill)));
+
             deleteButton.Click();
         }
 
-        public bool IsSkillRemoved(string skill)
-        {
-            try
-            {
-                
-                var skillRow = By.XPath($"//div[contains(@class,'active')]//td[normalize-space()='{skill}']");
-                _wait.Until(ExpectedConditions.InvisibilityOfElementLocated(skillRow));
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
+        
         private By EditButtonForSkill(string skill)
         {
             return By.XPath($"//div[contains(@class,'active')]//td[normalize-space()='{skill}']/following-sibling::td//i[contains(@class,'write')]");
@@ -133,13 +120,6 @@ namespace qa_dotnet_cucumber.Pages
             ClickUpdateButton();
         }
 
-        /*public void DeleteSkillIfExists(string skill)
-        {
-            if (IsSkillDisplayed(skill))
-            {
-                DeleteSkill(skill);
-            }
-        }*/
 
         public void DeleteSkillIfExists(string skill)
         {
@@ -177,6 +157,29 @@ namespace qa_dotnet_cucumber.Pages
                 return false;
             }
         }
+
+        public bool IsSkillRemoved(string skill)
+        {
+            try
+            {
+                var skillRow = By.XPath(
+                    $"//div[contains(@class,'active')]" +
+                    $"//td[normalize-space()='{skill}']"
+                );
+
+                _wait.Until(
+                    ExpectedConditions.InvisibilityOfElementLocated(skillRow)
+                );
+
+                return true;
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+        }
+
+
     }
 
 }
