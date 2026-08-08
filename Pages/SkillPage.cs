@@ -133,11 +133,48 @@ namespace qa_dotnet_cucumber.Pages
             ClickUpdateButton();
         }
 
+        /*public void DeleteSkillIfExists(string skill)
+        {
+            if (IsSkillDisplayed(skill))
+            {
+                DeleteSkill(skill);
+            }
+        }*/
+
         public void DeleteSkillIfExists(string skill)
         {
             if (IsSkillDisplayed(skill))
             {
                 DeleteSkill(skill);
+
+                if (!IsSkillRemoved(skill))
+                {
+                    throw new WebDriverTimeoutException(
+                        $"The language '{skill}' was not removed during cleanup."
+                    );
+                }
+            }
+        }
+
+        // Add a new langauage
+
+        public bool IsSkillAndLevelDisplayed(string skill, string level)
+        {
+            try
+            {
+                var skillRow = By.XPath(
+                    $"//div[contains(@class,'active')]" +
+                    $"//td[normalize-space()='{skill}']" +
+                    $"/following-sibling::td[normalize-space()='{level}']"
+                );
+
+                return _wait
+                    .Until(ExpectedConditions.ElementIsVisible(skillRow))
+                    .Displayed;
+            }
+            catch
+            {
+                return false;
             }
         }
     }

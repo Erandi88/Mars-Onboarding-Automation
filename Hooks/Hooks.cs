@@ -114,11 +114,16 @@ namespace qa_dotnet_cucumber.Hooks
             try
             {
                 var languagePage = _objectContainer.Resolve<LanguagePage>();
+                var skillPage = _objectContainer.Resolve<SkillPage>();
                 var testDataContext = _objectContainer.Resolve<TestDataContext>();
 
                 foreach (string language in testDataContext.CreatedLanguages)
                 {
                     languagePage.DeleteLanguageIfExists(language);
+                }
+                foreach (string skill in testDataContext.CreatedSkills)
+                {
+                    skillPage.DeleteSkillIfExists(skill);
                 }
             }
             finally

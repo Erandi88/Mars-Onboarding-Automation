@@ -64,9 +64,7 @@ namespace qa_dotnet_cucumber.Steps
          * This assertion can be reused after Add and Edit actions.
          */
         [Then(@"the language ""(.*)"" should be displayed with level ""(.*)""")]
-        public void ThenTheLanguageShouldBeDisplayedWithLevel(
-            string language,
-            string level)
+        public void ThenTheLanguageShouldBeDisplayedWithLevel(string language,string level)
         {
             Assert.That(
                 _languagePage.IsLanguageAndLevelDisplayed(language, level),

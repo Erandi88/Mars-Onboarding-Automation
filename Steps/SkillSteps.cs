@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using qa_dotnet_cucumber.Contexts;
 using qa_dotnet_cucumber.Pages;
 using Reqnroll;
 
@@ -8,6 +9,7 @@ namespace qa_dotnet_cucumber.Steps
     public class SkillSteps
     {
         private readonly SkillPage _skillPage;
+        private readonly TestDataContext _testDataContext;
 
         private readonly string _skill = "AutomationSkill";
         private readonly string _level = "Beginner";
@@ -16,9 +18,10 @@ namespace qa_dotnet_cucumber.Steps
         private readonly string _updatedLevel = "Intermediate";
 
 
-        public SkillSteps(SkillPage skillPage)
+        public SkillSteps(SkillPage skillPage, TestDataContext testDataContext)
         {
             _skillPage = skillPage;
+            _testDataContext = testDataContext;
         }
 
         [Given("I am on the Profile page")]
@@ -37,17 +40,37 @@ namespace qa_dotnet_cucumber.Steps
             _skillPage.ClickSkillsTab();
         }
 
-        [When("I add a new skill with valid details")]
-        public void WhenIAddANewSkillWithValidDetails()
+        /*add a new skill*/
+
+        [When(@"I add the skill ""(.*)"" with level ""(.*)""")]
+        public void WhenIAddTheSkillWithLevel(string skill,string level)
         {
-            DeleteSkillTestDataIfExists();
-            _skillPage.AddSkill(_skill, _level);
+            // Cleanup before the action.
+            _skillPage.DeleteSkillIfExists(skill);
+
+            // Confirm that the test starts with the correct state.
+            Assert.That(
+                _skillPage.IsSkillDisplayed(skill),Is.False,
+                $"The skill '{skill}' should not exist " +
+                "before the test starts."
+            );
+
+            // Perform the scenario action.
+            _skillPage.AddSkill(skill, level);
+
+            // Store the created record for after-scenario cleanup.
+            _testDataContext.CreatedSkills.Add(skill);
         }
 
-        [Then("the skill should be displayed in the skill list")]
-        public void ThenTheSkillShouldBeDisplayedInTheSkillList()
+        [Then(@"the skill ""(.*)"" should be displayed with level ""(.*)""")]
+        public void ThenTheSkillShouldBeDisplayedWithLevel(string skill,string level)
         {
-            Assert.That(_skillPage.IsSkillDisplayed(_skill),Is.True,"The added skill should be displayed in the skill list.");
+            Assert.That(
+                _skillPage.IsSkillAndLevelDisplayed(skill, level),
+                Is.True,
+                $"The skill '{skill}' should be displayed " +
+                $"with level '{level}'."
+            );
         }
 
 
