@@ -14,7 +14,7 @@ namespace qa_dotnet_cucumber.Pages
         private readonly By LanguageLevelDropdown = By.XPath("//select[@name='level']");
         private readonly By AddButton = By.XPath("//input[@value='Add']");
         private readonly By UpdateButton = By.XPath("//input[@value='Update']");
-
+        private readonly By CancelButton = By.XPath("//div[contains(@class,'active')]//input[@value='Cancel']");
         public LanguagePage(IWebDriver driver)
         {
             _driver = driver;
@@ -263,6 +263,33 @@ namespace qa_dotnet_cucumber.Pages
             {
                 return false;
             }
+        }
+
+        public bool IsLanguageAlreadyAddedMessageDisplayed()
+        {
+            try
+            {
+                var message = By.XPath(
+                    "//*[normalize-space()='This language is already added to your language list.']"
+                );
+
+                return _wait
+                    .Until(ExpectedConditions.ElementIsVisible(message))
+                    .Displayed;
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+        }
+
+        public void ClickCancelButton()
+        {
+            var cancelButton = _wait.Until(
+                ExpectedConditions.ElementToBeClickable(CancelButton)
+            );
+
+            cancelButton.Click();
         }
 
     }

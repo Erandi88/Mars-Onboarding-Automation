@@ -70,6 +70,21 @@ Examples:
     | AutoJapanese | Basic        | Conversational |
 
 
+@negative @validinput
+Scenario Outline: Update a language to an existing language
+    Given the language "<ExistingLanguage>" with level "<Level>" exists
+    And the language "<LanguageToUpdate>" with level "<Level>" exists
+    When I update the language "<LanguageToUpdate>" to "<ExistingLanguage>" with level "<Level>"
+    Then the language already added message should be displayed
+    When I cancel the language edit
+    Then the language "<ExistingLanguage>" should be displayed with level "<Level>"
+    And the language "<LanguageToUpdate>" should be displayed with level "<Level>"
+
+Examples:
+    | ExistingLanguage | LanguageToUpdate | Level          |
+    | AutoEnglish      | AutoFrench       | Conversational |
+
+
 
 @negative @invalidinput
 Scenario Outline: Add a language with an empty language field
