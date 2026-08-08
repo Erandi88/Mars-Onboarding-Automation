@@ -120,6 +120,13 @@ namespace qa_dotnet_cucumber.Pages
             ClickUpdateButton();
         }
 
+        public void AddSkillWithoutLevel(string skill)
+        {
+            ClickAddNewButton();
+            EnterSkill(skill);
+            ClickAddButton();
+        }
+
 
         public void DeleteSkillIfExists(string skill)
         {
@@ -172,6 +179,66 @@ namespace qa_dotnet_cucumber.Pages
                 );
 
                 return true;
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+        }
+
+        //record count
+        public int GetSkillRecordCount(string skill, string level)
+        {
+            var skillRows = By.XPath(
+                $"//div[contains(@class,'active')]//tr[" +
+                $"td[normalize-space()='{skill}'] and " +
+                $"td[normalize-space()='{level}']]"
+            );
+
+            return _driver.FindElements(skillRows).Count;
+        }
+
+        //duplicate mes
+        public bool IsDuplicateSkillMessageDisplayed()
+        {
+            try
+            {
+                var message = By.XPath(
+                    "//*[normalize-space()='This skill is already exist in your skill list.']"
+                );
+
+                return _wait
+                    .Until(ExpectedConditions.ElementIsVisible(message))
+                    .Displayed;
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+        }
+
+        //row count
+        public int GetSkillRowCount()
+        {
+            var skillRows = By.XPath(
+                "//div[contains(@class,'active')]//table/tbody/tr"
+            );
+
+            return _driver.FindElements(skillRows).Count;
+        }
+
+        //empty skill & level mesg
+        public bool IsSkillValidationMessageDisplayed()
+        {
+            try
+            {
+                var message = By.XPath(
+                    "//*[normalize-space()='Please enter skill and experience level']"
+                );
+
+                return _wait
+                    .Until(ExpectedConditions.ElementIsVisible(message))
+                    .Displayed;
             }
             catch (WebDriverTimeoutException)
             {

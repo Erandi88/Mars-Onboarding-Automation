@@ -75,7 +75,7 @@ namespace qa_dotnet_cucumber.Steps
         }
 
 
-        /* Edit an existing skill with valid details, edid, delete */
+        /* Edit an existing skill with valid details, edid, delete , duplicate*/
 
         [Given(@"the skill ""(.*)"" with level ""(.*)"" exists")]
         public void GivenTheSkillWithLevelExists(string skill, string level)
@@ -122,6 +122,69 @@ namespace qa_dotnet_cucumber.Steps
 
             _testDataContext.CreatedSkills.Remove(skill);
         }
+
+        /* duplicate */
+        [When(@"I try to add the skill ""(.*)"" with level ""(.*)"" again")]
+        public void WhenITryToAddTheSkillAgain(string skill, string level)
+        {
+            _skillPage.AddSkill(skill, level);
+        }
+
+        [Then("the duplicate skill message should be displayed")]
+        public void ThenTheDuplicateSkillMessageShouldBeDisplayed()
+        {
+            Assert.That(
+                _skillPage.IsDuplicateSkillMessageDisplayed(),
+                Is.True,
+                "The duplicate skill validation message should be displayed."
+            );
+        }
+
+        /*empty skill*/
+
+        [When(@"I try to add a skill with an empty skill field and level ""(.*)""")]
+        public void WhenITryToAddASkillWithAnEmptySkillFieldAndLevel(string level)
+        {
+            _testDataContext.SkillRowCountBeforeAction =
+                _skillPage.GetSkillRowCount();
+
+            _skillPage.AddSkill(string.Empty, level);
+        }
+
+        //reuse for empty skill, empty level
+        [Then("the skill validation message should be displayed")]
+        public void ThenTheSkillValidationMessageShouldBeDisplayed()
+        {
+            Assert.That(
+                _skillPage.IsSkillValidationMessageDisplayed(),
+                Is.True,
+                "The skill validation message should be displayed."
+            );
+        }
+
+        //reuse for empty skill, empty level
+        [Then("no new skill record should be created")]
+        public void ThenNoNewSkillRecordShouldBeCreated()
+        {
+            int skillRowCountAfterAction = _skillPage.GetSkillRowCount();
+
+            Assert.That(
+                skillRowCountAfterAction,
+                Is.EqualTo(_testDataContext.SkillRowCountBeforeAction),
+                "A new skill record should not be created when the skill field is empty."
+            );
+        }
+
+        /*empty level*/
+        [When(@"I try to add the skill ""(.*)"" with an empty level")]
+        public void WhenITryToAddTheSkillWithAnEmptyLevel(string skill)
+        {
+            _testDataContext.SkillRowCountBeforeAction =
+                _skillPage.GetSkillRowCount();
+
+            _skillPage.AddSkillWithoutLevel(skill);
+        }
+
 
 
         [Given("a skill exists in the skill list")]

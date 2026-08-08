@@ -40,3 +40,37 @@ Scenario Outline: Delete an existing skill
 Examples:
     | Skill           | Level        |
     | AutoDeleteSkill | Intermediate |
+
+
+@negative @validinput
+Scenario Outline: Add a duplicate skill
+    Given the skill "<Skill>" with level "<Level>" exists
+    When I try to add the skill "<Skill>" with level "<Level>" again
+    Then only one "<Skill>" with level "<Level>" should exist
+    And the duplicate skill message should be displayed
+
+Examples:
+    | Skill              | Level    |
+    | AutoDuplicateSkill | Beginner |
+
+
+@negative @invalidinput
+Scenario Outline: Add a skill with an empty skill field
+    When I try to add a skill with an empty skill field and level "<Level>"
+    Then the skill validation message should be displayed
+    And no new skill record should be created
+
+Examples:
+    | Level    |
+    | Beginner |
+
+
+@negative @invalidinput
+Scenario Outline: Add a skill with an empty level field
+    When I try to add the skill "<Skill>" with an empty level
+    Then the skill validation message should be displayed
+    And no new skill record should be created
+
+Examples:
+    | Skill               |
+    | AutoEmptyLevelSkill |
