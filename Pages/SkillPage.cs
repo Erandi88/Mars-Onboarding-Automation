@@ -14,7 +14,9 @@ namespace qa_dotnet_cucumber.Pages
         private readonly By SkillField = By.XPath("//div[contains(@class,'active')]//input[@placeholder='Add Skill']");
         private readonly By SkillLevelDropdown = By.XPath("//div[contains(@class,'active')]//select[@name='level']");
         private readonly By AddButton = By.XPath("//div[contains(@class,'active')]//input[@value='Add']");
-        private readonly By UpdateButton = By.XPath("//div[contains(@class,'active')]//input[@value='Update']");
+        private readonly By UpdateButton = By.XPath("//input[@value='Update'] | //button[normalize-space()='Update']");
+        //private readonly By UpdateButton = By.XPath("//div[contains(@class,'active')]//input[@value='Update']");
+        private readonly By CancelButton = By.XPath("//div[contains(@class,'active')]//input[@value='Cancel']");
 
         public SkillPage(IWebDriver driver)
         {
@@ -232,8 +234,47 @@ namespace qa_dotnet_cucumber.Pages
         {
             try
             {
+                return _wait.Until(driver =>
+                {
+                    var messages = driver.FindElements(
+                        By.XPath(
+                            "//*[contains(normalize-space(.), " +
+                            "'Please enter skill and experience level')]"
+                        )
+                    );
+
+                    return messages.Any(message =>
+                        message.Displayed &&
+                        message.Text.Contains(
+                            "Please enter skill and experience level"
+                        )
+                    );
+                });
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+        }
+
+        //record count skill name only
+        public int GetSkillRecordCount(string skill)
+        {
+            var skillRows = By.XPath(
+                $"//div[contains(@class,'active')]//tr[" +
+                $"td[normalize-space()='{skill}']]"
+            );
+
+            return _driver.FindElements(skillRows).Count;
+        }
+
+        //duplicate meg
+        public bool IsDuplicatedDataMessageDisplayed()
+        {
+            try
+            {
                 var message = By.XPath(
-                    "//*[normalize-space()='Please enter skill and experience level']"
+                    "//*[normalize-space()='Duplicated data']"
                 );
 
                 return _wait
@@ -244,6 +285,86 @@ namespace qa_dotnet_cucumber.Pages
             {
                 return false;
             }
+        }
+
+        //Check that the record remains interactive
+        public bool IsSkillDeleteButtonClickable(string skill)
+        {
+            try
+            {
+                var deleteButton = _wait.Until(
+                    ExpectedConditions.ElementToBeClickable(
+                        DeleteButtonForSkill(skill)
+                    )
+                );
+
+                return deleteButton.Displayed && deleteButton.Enabled;
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+        }
+
+        //Update a skill to an existing skill
+        public bool IsSkillAlreadyAddedMessageDisplayed()
+        {
+            try
+            {
+                var message = By.XPath(
+                    "//*[normalize-space()='This skill is already added to your skill list.']"
+                );
+
+                return _wait
+                    .Until(ExpectedConditions.ElementIsVisible(message))
+                    .Displayed;
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+        }
+
+        public void ClickCancelButton()
+        {
+            var cancelButton = _wait.Until(
+                ExpectedConditions.ElementToBeClickable(CancelButton)
+            );
+
+            cancelButton.Click();
+        }
+
+        //Update a skill with an empty skill field
+        public void ClearSkillField()
+        {
+            var skillInput = _wait.Until(
+                ExpectedConditions.ElementIsVisible(SkillField)
+            );
+
+            skillInput.Click();
+
+            skillInput.SendKeys(Keys.Control + "a");
+            skillInput.SendKeys(Keys.Backspace);
+
+            _wait.Until(driver =>
+                string.IsNullOrEmpty(skillInput.GetAttribute("value"))
+            );
+        }
+
+        public void EditSkillWithEmptySkill(string currentSkill)
+        {
+            ClickEditSkill(currentSkill);
+            ClearSkillField();
+            ClickUpdateButton();
+        }
+
+        public string GetSkillFieldValue()
+        {
+            var skillInput = _wait.Until(
+                ExpectedConditions.ElementIsVisible(SkillField)
+            );
+
+            return skillInput.GetAttribute("value") ?? string.Empty;
         }
 
 

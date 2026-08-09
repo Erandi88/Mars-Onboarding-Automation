@@ -75,7 +75,7 @@ namespace qa_dotnet_cucumber.Steps
         }
 
 
-        /* Edit an existing skill with valid details, edid, delete , duplicate*/
+        /* Edit an existing skill with valid details, edid, delete , duplicate, same skill diff level*/
 
         [Given(@"the skill ""(.*)"" with level ""(.*)"" exists")]
         public void GivenTheSkillWithLevelExists(string skill, string level)
@@ -185,6 +185,119 @@ namespace qa_dotnet_cucumber.Steps
             _skillPage.AddSkillWithoutLevel(skill);
         }
 
+        //same skill diff level
+        /*[When(@"I try to add the skill ""(.*)"" with level ""(.*)"" again")]
+        public void WhenITryToAddTheSkillWithDifferentLevelAgain(string skill,string newLevel)
+        {
+            _skillPage.AddSkill(skill, newLevel);
+        }*/
+
+        [Then(@"only one record for the skill ""(.*)"" should exist")]
+        public void ThenOnlyOneRecordForTheSkillShouldExist(string skill)
+        {
+            int count = _skillPage.GetSkillRecordCount(skill);
+
+            Assert.That(
+                count,
+                Is.EqualTo(1),
+                $"Only one record for the skill '{skill}' should exist."
+            );
+        }
+
+        [Then("the skill duplicated data message should be displayed")]
+        public void ThenTheDuplicatedDataMessageShouldBeDisplayed()
+        {
+            Assert.That(
+                _skillPage.IsDuplicatedDataMessageDisplayed(),
+                Is.True,
+                "The duplicated data message should be displayed."
+            );
+        }
+
+        //500
+        [When(@"I add a skill containing ""(.*)"" characters with level ""(.*)""")]
+        public void WhenIAddASkillContainingCharactersWithLevel(int characterCount, string level)
+        {
+            string longSkill = new string('A', characterCount);
+
+            _skillPage.DeleteSkillIfExists(longSkill);
+
+            _skillPage.AddSkill(longSkill, level);
+
+            _testDataContext.CreatedSkills.Add(longSkill);
+            _testDataContext.CurrentSkill = longSkill;
+        }
+
+        [Then(@"the very large skill should be displayed with level ""(.*)""")]
+        public void ThenTheVeryLargeSkillShouldBeDisplayedWithLevel(string level)
+        {
+            Assert.That(
+                _skillPage.IsSkillAndLevelDisplayed(
+                    _testDataContext.CurrentSkill,
+                    level
+                ),
+                Is.True,
+                $"The very large skill should be displayed with level '{level}'."
+            );
+        }
+
+        [Then("the very large skill record should remain interactive")]
+        public void ThenTheVeryLargeSkillRecordShouldRemainInteractive()
+        {
+            Assert.That(
+                _skillPage.IsSkillDeleteButtonClickable(
+                    _testDataContext.CurrentSkill
+                ),
+                Is.True,
+                "The very large skill record should remain interactive."
+            );
+        }
+
+
+        //update a skill to an existing skill
+        [When(@"I try to update the skill ""(.*)"" to ""(.*)"" with level ""(.*)""")]
+        public void WhenITryToUpdateTheSkillToExistingSkill(string skillToUpdate, string existingSkill,string existingLevel)
+        {
+            _skillPage.EditSkill( skillToUpdate, existingSkill, existingLevel);
+        }
+
+        [Then("the skill already added message should be displayed")]
+        public void ThenTheSkillAlreadyAddedMessageShouldBeDisplayed()
+        {
+            Assert.That(
+                _skillPage.IsSkillAlreadyAddedMessageDisplayed(),Is.True,
+                "The skill already added message should be displayed."
+            );
+        }
+
+        [When("I cancel the skill edit")]
+        public void WhenICancelTheSkillEdit()
+        {
+            _skillPage.ClickCancelButton();
+        }
+
+
+        //Update a skill with an empty skill field
+        /*[When(@"I try to update the skill ""(.*)"" with an empty skill field")]
+        public void WhenITryToUpdateTheSkillWithAnEmptySkillField(string skill)
+        {
+            _skillPage.EditSkillWithEmptySkill(skill);
+        }*/
+
+        [When(@"I try to update the skill ""(.*)"" with an empty skill field")]
+        public void WhenITryToUpdateTheSkillWithAnEmptySkillField(string skill)
+        {
+            _skillPage.ClickEditSkill(skill);
+            _skillPage.ClearSkillField();
+
+            Assert.That(
+                _skillPage.GetSkillFieldValue(),
+                Is.Empty,
+                "The skill field should be empty before clicking Update."
+            );
+
+            _skillPage.ClickUpdateButton();
+        }
 
 
         [Given("a skill exists in the skill list")]

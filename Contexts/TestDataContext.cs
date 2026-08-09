@@ -15,5 +15,6 @@ namespace qa_dotnet_cucumber.Contexts
         public int SkillRowCountBeforeAction { get; set; }
 
         public string CurrentLanguage { get; set; } = string.Empty;
+        public string CurrentSkill { get; set; } = string.Empty;
     }
 }
