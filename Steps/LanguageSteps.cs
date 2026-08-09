@@ -374,6 +374,99 @@ namespace qa_dotnet_cucumber.Steps
 
         #endregion
 
+        //update empty language
+        [When(@"I try to update the language ""(.*)"" with an empty language field")]
+        public void WhenITryToUpdateTheLanguageWithAnEmptyLanguageField(string language)
+        {
+            _languagePage.ClickEditLanguage(language);
+
+            _languagePage.ClearLanguageField();
+
+            Assert.That(
+                _languagePage.GetLanguageFieldValue(),
+                Is.Empty,
+                "The language field should be empty before clicking Update."
+            );
+
+            _languagePage.ClickUpdateButton();
+        }
+
+
+        //update a langauage with an empty level
+        [When(@"I try to update the language ""(.*)"" with an empty level")]
+        public void WhenITryToUpdateTheLanguageWithAnEmptyLevel(string language)
+        {
+            _languagePage.EditLanguageWithEmptyLevel(language);
+        }
+
+        //bounry test
+        [When("I add languages until the maximum limit is reached")]
+        public void WhenIAddLanguagesUntilTheMaximumLimitIsReached()
+        {
+            string[] testLanguages =
+            {
+                "AutoMaxLanguage1",
+                "AutoMaxLanguage2",
+                "AutoMaxLanguage3",
+                "AutoMaxLanguage4"
+            };
+
+            // Remove only leftover data belonging to this automation test.
+            foreach (string language in testLanguages)
+            {
+                _languagePage.DeleteLanguageIfExists(language);
+            }
+
+            int currentCount = _languagePage.GetLanguageRowCount();
+
+            Assert.That(
+                currentCount,
+                Is.LessThanOrEqualTo(4),
+                "The language list should not already contain more than four records."
+            );
+
+            foreach (string language in testLanguages)
+            {
+                if (currentCount >= 4)
+                {
+                    break;
+                }
+
+                _languagePage.AddLanguage(language, "Basic");
+
+                _testDataContext.CreatedLanguages.Add(language);
+
+                currentCount++;
+
+                Assert.That(
+                    _languagePage.WaitForLanguageRowCount(currentCount),
+                    Is.True,
+                    $"The language row count should become {currentCount}."
+                );
+            }
+        }
+
+        [Then("exactly 4 language records should be displayed")]
+        public void ThenExactlyFourLanguageRecordsShouldBeDisplayed()
+        {
+            int count = _languagePage.GetLanguageRowCount();
+
+            Assert.That(
+                count,
+                Is.EqualTo(4),
+                "The user should have a maximum of four language records."
+            );
+        }
+
+        [Then("the Add New language button should not be available")]
+        public void ThenTheAddNewLanguageButtonShouldNotBeAvailable()
+        {
+            Assert.That(
+                _languagePage.IsAddNewButtonDisplay(),
+                Is.False,
+                "The Add New button should not be available after four languages are added."
+            );
+        }
 
         #region 9. Private Helper Methods
 

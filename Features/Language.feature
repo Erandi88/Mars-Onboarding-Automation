@@ -109,6 +109,31 @@ Examples:
     | AutoFrench |
 
 
+@negative @invalidinput
+Scenario Outline: Update a language with an empty language field
+    Given the language "<Language>" with level "<Level>" exists
+    When I try to update the language "<Language>" with an empty language field
+    Then the language validation message should be displayed
+    When I cancel the language edit
+    Then the language "<Language>" should be displayed with level "<Level>"
+
+Examples:
+    | Language    | Level          |
+    | AutoEnglish | Conversational |
+
+
+@negative @invalidinput
+Scenario Outline: Update a language with an empty level field
+    Given the language "<Language>" with level "<Level>" exists
+    When I try to update the language "<Language>" with an empty level
+    Then the language validation message should be displayed
+    When I cancel the language edit
+    Then the language "<Language>" should be displayed with level "<Level>"
+
+Examples:
+    | Language   | Level |
+    | AutoFrench | Basic |
+
 @destructive
 Scenario Outline: Add a language with a very large input
     When I add a language containing "<CharacterCount>" characters with level "<Level>"
@@ -118,3 +143,10 @@ Scenario Outline: Add a language with a very large input
 Examples:
     | CharacterCount | Level |
     | 500            | Basic |
+
+
+@boundary
+Scenario: User cannot add more than four languages
+    When I add languages until the maximum limit is reached
+    Then exactly 4 language records should be displayed
+    And the Add New language button should not be available

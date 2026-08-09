@@ -292,5 +292,72 @@ namespace qa_dotnet_cucumber.Pages
             cancelButton.Click();
         }
 
+        public void ClearLanguageField()
+        {
+            var languageInput = _wait.Until(
+                ExpectedConditions.ElementIsVisible(LanguageField)
+            );
+
+            languageInput.Click();
+            languageInput.SendKeys(Keys.Control + "a");
+            languageInput.SendKeys(Keys.Backspace);
+
+            _wait.Until(driver =>
+                string.IsNullOrEmpty(languageInput.GetAttribute("value"))
+            );
+        }
+
+        public string GetLanguageFieldValue()
+        {
+            var languageInput = _wait.Until(
+                ExpectedConditions.ElementIsVisible(LanguageField)
+            );
+
+            return languageInput.GetAttribute("value") ?? string.Empty;
+        }
+
+        public void SelectEmptyLanguageLevel()
+        {
+            var dropdownElement = _wait.Until(
+                ExpectedConditions.ElementIsVisible(LanguageLevelDropdown)
+            );
+
+            var selectElement = new SelectElement(dropdownElement);
+
+            selectElement.SelectByIndex(0);
+        }
+
+        public void EditLanguageWithEmptyLevel(string currentLanguage)
+        {
+            ClickEditLanguage(currentLanguage);
+            SelectEmptyLanguageLevel();
+            ClickUpdateButton();
+        }
+
+        /*Bounry test */
+
+        public bool WaitForLanguageRowCount(int expectedCount)
+        {
+            try
+            {
+                return _wait.Until(driver =>
+                    GetLanguageRowCount() == expectedCount
+                );
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+        }
+
+        public bool IsAddNewButtonDisplay()
+        {
+            var buttons = _driver.FindElements(AddNewButton);
+
+            return buttons.Any(button =>
+                button.Displayed && button.Enabled
+            );
+        }
+
     }
 }

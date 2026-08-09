@@ -117,6 +117,19 @@ Examples:
     | AutoTestingSkill | Beginner |
 
 
+@negative @invalidinput
+Scenario Outline: Update a skill with an empty level field
+    Given the skill "<Skill>" with level "<Level>" exists
+    When I try to update the skill "<Skill>" with an empty level
+    Then the skill validation message should be displayed
+    When I cancel the skill edit
+    Then the skill "<Skill>" should be displayed with level "<Level>"
+
+Examples:
+    | Skill          | Level    |
+    | AutoEmptyLevel | Beginner |
+
+
 @destructive
 Scenario Outline: Add a skill with a very large input
     When I add a skill containing "<CharacterCount>" characters with level "<Level>"

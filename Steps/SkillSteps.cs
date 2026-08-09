@@ -278,12 +278,7 @@ namespace qa_dotnet_cucumber.Steps
 
 
         //Update a skill with an empty skill field
-        /*[When(@"I try to update the skill ""(.*)"" with an empty skill field")]
-        public void WhenITryToUpdateTheSkillWithAnEmptySkillField(string skill)
-        {
-            _skillPage.EditSkillWithEmptySkill(skill);
-        }*/
-
+       
         [When(@"I try to update the skill ""(.*)"" with an empty skill field")]
         public void WhenITryToUpdateTheSkillWithAnEmptySkillField(string skill)
         {
@@ -297,6 +292,13 @@ namespace qa_dotnet_cucumber.Steps
             );
 
             _skillPage.ClickUpdateButton();
+        }
+
+        //update a skill with an empty level field
+        [When(@"I try to update the skill ""(.*)"" with an empty level")]
+        public void WhenITryToUpdateTheSkillWithAnEmptyLevel(string skill)
+        {
+            _skillPage.EditSkillWithEmptyLevel(skill);
         }
 
 

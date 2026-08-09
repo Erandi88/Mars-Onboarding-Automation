@@ -368,6 +368,26 @@ namespace qa_dotnet_cucumber.Pages
         }
 
 
+        //update a skill with empty level
+        public void SelectEmptySkillLevel()
+        {
+            var dropdownElement = _wait.Until(
+                ExpectedConditions.ElementIsVisible(SkillLevelDropdown)
+            );
+
+            var selectElement = new SelectElement(dropdownElement);
+
+            selectElement.SelectByIndex(0);
+        }
+
+        public void EditSkillWithEmptyLevel(string currentSkill)
+        {
+            ClickEditSkill(currentSkill);
+            SelectEmptySkillLevel();
+            ClickUpdateButton();
+        }
+
+
     }
 
 }
