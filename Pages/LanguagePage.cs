@@ -334,7 +334,7 @@ namespace qa_dotnet_cucumber.Pages
             ClickUpdateButton();
         }
 
-        /*Bounry test */
+        /* Boundary test */
 
         public bool WaitForLanguageRowCount(int expectedCount)
         {

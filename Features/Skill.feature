@@ -16,6 +16,8 @@ Scenario Outline: Add skill with valid details
 Examples:
     | Skill           | Level    |
     | AutoTestingSkill | Beginner |
+    | AutoCommunicationSkill | Intermediate |
+    | AutoTeamworkSkill | Expert |
 
 
 
@@ -28,6 +30,7 @@ Scenario Outline: Edit an existing skill with valid details
 Examples:
     | Skill           | Level    | UpdatedSkill             | UpdatedLevel |
     | AutoTestingSkill | Beginner | AutoCommunicationSkill   | Intermediate |
+    | AutoTeamworkSkill | Beginner | AutoTimeManagementSkill   | Expert |
 
 
 
@@ -40,6 +43,8 @@ Scenario Outline: Delete an existing skill
 Examples:
     | Skill           | Level        |
     | AutoDeleteSkill | Intermediate |
+    | AutoTimingSkill | Beginner |
+    | AutoCommunucationSkill | Expert |
 
 
 @negative @validinput
@@ -52,6 +57,8 @@ Scenario Outline: Add a duplicate skill
 Examples:
     | Skill              | Level    |
     | AutoDuplicateSkill | Beginner |
+    | AutoDancingSkill | Intermediate |
+    | AutoSingingSkill | Expert |
 
 
 @negative @validinput
@@ -67,6 +74,7 @@ Scenario Outline: Update a skill to an existing skill
 Examples:
     | ExistingSkill    | ExistingLevel | SkillToUpdate          | CurrentLevel |
     | AutoTestingSkill | Beginner      | AutoCommunicationSkill | Intermediate |
+    | AutoTimingSkill | Expert      | AutoWritingSkill | Intermediate |
 
 
 @negative @invalidinput
@@ -78,7 +86,7 @@ Scenario Outline: Add a skill with an empty skill field
 Examples:
     | Level    |
     | Beginner |
-
+   
 
 @negative @invalidinput
 Scenario Outline: Add a skill with an empty level field
@@ -89,7 +97,7 @@ Scenario Outline: Add a skill with an empty level field
 Examples:
     | Skill               |
     | AutoEmptyLevelSkill |
-
+   
 
 @negative @validinput
 Scenario Outline: Add the same skill with a different level
@@ -102,6 +110,8 @@ Scenario Outline: Add the same skill with a different level
 Examples:
     | Skill            | CurrentLevel | NewLevel     |
     | AutoTestingSkill | Beginner     | Intermediate |
+    | AutoSingingSkill | Expert     | Beginner |
+    | AutoCookingSkill | Intermediate     | Expert |
 
 
 @negative @invalidinput
@@ -115,7 +125,7 @@ Scenario Outline: Update a skill with an empty skill field
 Examples:
     | Skill            | Level    |
     | AutoTestingSkill | Beginner |
-
+    
 
 @negative @invalidinput
 Scenario Outline: Update a skill with an empty level field
@@ -128,7 +138,7 @@ Scenario Outline: Update a skill with an empty level field
 Examples:
     | Skill          | Level    |
     | AutoEmptyLevel | Beginner |
-
+   
 
 @destructive
 Scenario Outline: Add a skill with a very large input

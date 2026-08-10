@@ -15,7 +15,6 @@ namespace qa_dotnet_cucumber.Pages
         private readonly By SkillLevelDropdown = By.XPath("//div[contains(@class,'active')]//select[@name='level']");
         private readonly By AddButton = By.XPath("//div[contains(@class,'active')]//input[@value='Add']");
         private readonly By UpdateButton = By.XPath("//input[@value='Update'] | //button[normalize-space()='Update']");
-        //private readonly By UpdateButton = By.XPath("//div[contains(@class,'active')]//input[@value='Update']");
         private readonly By CancelButton = By.XPath("//div[contains(@class,'active')]//input[@value='Cancel']");
 
         public SkillPage(IWebDriver driver)
@@ -26,8 +25,16 @@ namespace qa_dotnet_cucumber.Pages
 
         public bool IsProfilePageDisplayed()
         {
-            _wait.Until(driver => driver.Url.Contains("/Account/Profile"));
-            return _driver.Url.Contains("/Account/Profile");
+            try
+            {
+                return _wait.Until(driver =>
+                    driver.Url.Contains("/Account/Profile")
+                );
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
         }
 
         public void ClickSkillsTab()
@@ -139,13 +146,13 @@ namespace qa_dotnet_cucumber.Pages
                 if (!IsSkillRemoved(skill))
                 {
                     throw new WebDriverTimeoutException(
-                        $"The language '{skill}' was not removed during cleanup."
+                        $"The skill '{skill}' was not removed during cleanup."
                     );
                 }
             }
         }
 
-        // Add a new langauage
+        // Add a new skill
 
         public bool IsSkillAndLevelDisplayed(string skill, string level)
         {
@@ -200,7 +207,7 @@ namespace qa_dotnet_cucumber.Pages
             return _driver.FindElements(skillRows).Count;
         }
 
-        //duplicate mes
+        //duplicate msg
         public bool IsDuplicateSkillMessageDisplayed()
         {
             try
@@ -229,7 +236,7 @@ namespace qa_dotnet_cucumber.Pages
             return _driver.FindElements(skillRows).Count;
         }
 
-        //empty skill & level mesg
+        //empty skill & level msg
         public bool IsSkillValidationMessageDisplayed()
         {
             try
@@ -268,7 +275,7 @@ namespace qa_dotnet_cucumber.Pages
             return _driver.FindElements(skillRows).Count;
         }
 
-        //duplicate meg
+        //duplicate msg
         public bool IsDuplicatedDataMessageDisplayed()
         {
             try

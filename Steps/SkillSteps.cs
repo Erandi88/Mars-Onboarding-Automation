@@ -11,13 +11,7 @@ namespace qa_dotnet_cucumber.Steps
         private readonly SkillPage _skillPage;
         private readonly TestDataContext _testDataContext;
 
-        private readonly string _skill = "AutomationSkill";
-        private readonly string _level = "Beginner";
-
-        private readonly string _updatedSkill = "AutomationCommunication";
-        private readonly string _updatedLevel = "Intermediate";
-
-
+        
         public SkillSteps(SkillPage skillPage, TestDataContext testDataContext)
         {
             _skillPage = skillPage;
@@ -40,7 +34,7 @@ namespace qa_dotnet_cucumber.Steps
             _skillPage.ClickSkillsTab();
         }
 
-        /*add a new skill*/
+        /* add a new skill */
 
         [When(@"I add the skill ""(.*)"" with level ""(.*)""")]
         public void WhenIAddTheSkillWithLevel(string skill,string level)
@@ -103,7 +97,7 @@ namespace qa_dotnet_cucumber.Steps
             _testDataContext.CreatedSkills.Add(updatedSkill);
         }
 
-        /* delete*/
+        /* delete */
 
         [When(@"I delete the skill ""(.*)""")]
         public void WhenIDeleteTheSkill(string skill)
@@ -151,7 +145,7 @@ namespace qa_dotnet_cucumber.Steps
             _skillPage.AddSkill(string.Empty, level);
         }
 
-        //reuse for empty skill, empty level
+        // reuse for empty skill, empty level
         [Then("the skill validation message should be displayed")]
         public void ThenTheSkillValidationMessageShouldBeDisplayed()
         {
@@ -162,7 +156,7 @@ namespace qa_dotnet_cucumber.Steps
             );
         }
 
-        //reuse for empty skill, empty level
+        // reuse for empty skill, empty level
         [Then("no new skill record should be created")]
         public void ThenNoNewSkillRecordShouldBeCreated()
         {
@@ -175,7 +169,7 @@ namespace qa_dotnet_cucumber.Steps
             );
         }
 
-        /*empty level*/
+        /* empty level */
         [When(@"I try to add the skill ""(.*)"" with an empty level")]
         public void WhenITryToAddTheSkillWithAnEmptyLevel(string skill)
         {
@@ -185,13 +179,7 @@ namespace qa_dotnet_cucumber.Steps
             _skillPage.AddSkillWithoutLevel(skill);
         }
 
-        //same skill diff level
-        /*[When(@"I try to add the skill ""(.*)"" with level ""(.*)"" again")]
-        public void WhenITryToAddTheSkillWithDifferentLevelAgain(string skill,string newLevel)
-        {
-            _skillPage.AddSkill(skill, newLevel);
-        }*/
-
+        
         [Then(@"only one record for the skill ""(.*)"" should exist")]
         public void ThenOnlyOneRecordForTheSkillShouldExist(string skill)
         {
@@ -214,7 +202,7 @@ namespace qa_dotnet_cucumber.Steps
             );
         }
 
-        //500
+        //destructive
         [When(@"I add a skill containing ""(.*)"" characters with level ""(.*)""")]
         public void WhenIAddASkillContainingCharactersWithLevel(int characterCount, string level)
         {
@@ -301,52 +289,5 @@ namespace qa_dotnet_cucumber.Steps
             _skillPage.EditSkillWithEmptyLevel(skill);
         }
 
-
-        [Given("a skill exists in the skill list")]
-        public void GivenASkillExistsInTheSkillList()
-        {
-            if (!_skillPage.IsSkillDisplayed(_skill))
-            {
-                _skillPage.AddSkill(_skill, _level);
-            }
-        }
-
-        [When("I delete the skill")]
-        public void WhenIDeleteTheSkill()
-        {
-            _skillPage.DeleteSkill(_skill);
-        }
-
-        [Then("the skill should be removed from the skill list")]
-        public void ThenTheSkillShouldBeRemovedFromTheSkillList()
-        {
-            Assert.That(
-                _skillPage.IsSkillRemoved(_skill),
-                Is.True,
-                "The skill should be removed from the skill list."
-            );
-        }
-
-        [When("I edit the skill with new valid details")]
-        public void WhenIEditTheSkillWithNewValidDetails()
-        {
-            _skillPage.EditSkill(_skill, _updatedSkill, _updatedLevel);
-        }
-
-        [Then("the updated skill should be displayed in the skill list")]
-        public void ThenTheUpdatedSkillShouldBeDisplayedInTheSkillList()
-        {
-            Assert.That(
-                _skillPage.IsSkillDisplayed(_updatedSkill),
-                Is.True,
-                "The updated skill should be displayed in the skill list."
-            );
-        }
-
-        private void DeleteSkillTestDataIfExists()
-        {
-            _skillPage.DeleteSkillIfExists(_updatedSkill);
-            _skillPage.DeleteSkillIfExists(_skill);
-        }
     }
 }

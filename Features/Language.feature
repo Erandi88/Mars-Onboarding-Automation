@@ -16,9 +16,7 @@ Examples:
     | AutoEnglish | Fluent |
     | AutoFrench | Basic |
     | AutoHindi | Conversational |
-    | AutoGerman | Fluent |
-
-
+    
 
 @positive
 Scenario Outline: Delete an existing language
@@ -29,7 +27,8 @@ Scenario Outline: Delete an existing language
 Examples:
     | Language    | Level  |
     | AutoFrench | Basic |
-
+    | AutoHindi | Conversational |
+    | AutoGerman | Fluent |
 
 
 @positive
@@ -41,7 +40,8 @@ Scenario Outline: Edit an existing language
 Examples:
     | CurrentLanguage | CurrentLevel | NewLanguage | NewLevel          |
     | AutoSpanish     | Conversational | AutoGerman | Native/Bilingual |
-
+    | AutoHinidi     | Basic | AutoEnglish | Fluent |
+    | AutoEnglish     | Fluent | AutoTamil | Conversational |
 
 
 @negative @validinput
@@ -54,7 +54,7 @@ Scenario Outline: Add a duplicate language
 Examples:
     | Language   | Level   |
     | AutoItalian| Fluent  |
-
+    | AutoEnglish| Basic  |
 
 
 @negative @validinput
@@ -68,6 +68,7 @@ Scenario Outline: Add the same language with a different level
 Examples:
     | Language     | CurrentLevel | NewLevel |
     | AutoJapanese | Basic        | Conversational |
+    | AutoHindi | Fluent        | Basic |
 
 
 @negative @validinput
@@ -83,7 +84,7 @@ Scenario Outline: Update a language to an existing language
 Examples:
     | ExistingLanguage | LanguageToUpdate | Level          |
     | AutoEnglish      | AutoFrench       | Conversational |
-
+    | AutoJapanese      | AutoTamil       | Fluent |
 
 
 @negative @invalidinput
@@ -95,8 +96,7 @@ Scenario Outline: Add a language with an empty language field
 Examples:
     | Level |
     | Basic |
-
-
+    
 
 @negative @invalidinput
 Scenario Outline: Add a language with an empty level field
@@ -107,6 +107,7 @@ Scenario Outline: Add a language with an empty level field
 Examples:
     | Language   |
     | AutoFrench |
+    
 
 
 @negative @invalidinput
@@ -120,7 +121,7 @@ Scenario Outline: Update a language with an empty language field
 Examples:
     | Language    | Level          |
     | AutoEnglish | Conversational |
-
+   
 
 @negative @invalidinput
 Scenario Outline: Update a language with an empty level field
@@ -133,6 +134,7 @@ Scenario Outline: Update a language with an empty level field
 Examples:
     | Language   | Level |
     | AutoFrench | Basic |
+   
 
 @destructive
 Scenario Outline: Add a language with a very large input

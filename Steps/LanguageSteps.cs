@@ -9,7 +9,7 @@ namespace qa_dotnet_cucumber.Steps
     [Binding]
     public class LanguageSteps
     {
-        
+
         private readonly LoginPage _loginPage;
         private readonly LanguagePage _languagePage;
         private readonly NavigationHelper _navigationHelper;
@@ -26,8 +26,6 @@ namespace qa_dotnet_cucumber.Steps
             _testDataContext = testDataContext;
         }
 
-        
-        #region 2. Common and Reusable Steps
 
         [Given("I am logged in to Mars")]
         public void GivenIAmLoggedInToMars()
@@ -64,7 +62,7 @@ namespace qa_dotnet_cucumber.Steps
          * This assertion can be reused after Add and Edit actions.
          */
         [Then(@"the language ""(.*)"" should be displayed with level ""(.*)""")]
-        public void ThenTheLanguageShouldBeDisplayedWithLevel(string language,string level)
+        public void ThenTheLanguageShouldBeDisplayedWithLevel(string language, string level)
         {
             Assert.That(
                 _languagePage.IsLanguageAndLevelDisplayed(language, level),
@@ -74,10 +72,9 @@ namespace qa_dotnet_cucumber.Steps
             );
         }
 
-        #endregion
+        
 
-
-        #region 3. Add Language - Positive Scenario
+        //Add Language - Positive Scenario
 
         [When(@"I add the language ""(.*)"" with level ""(.*)""")]
         public void WhenIAddTheLanguageWithLevel(
@@ -102,10 +99,9 @@ namespace qa_dotnet_cucumber.Steps
             _testDataContext.CreatedLanguages.Add(language);
         }
 
-        #endregion
+        
 
-
-        #region 4. Edit Language Scenario
+        //Edit Language Scenario
 
         [When(
             @"I edit the language ""(.*)"" to ""(.*)"" with level ""(.*)""")]
@@ -128,10 +124,8 @@ namespace qa_dotnet_cucumber.Steps
             _testDataContext.CreatedLanguages.Add(newLanguage);
         }
 
-        #endregion
 
-
-        #region 5. Delete Language Scenario
+        //Delete Language Scenario
 
         [When(@"I delete the language ""(.*)""")]
         public void WhenIDeleteTheLanguage(string language)
@@ -156,10 +150,7 @@ namespace qa_dotnet_cucumber.Steps
             _testDataContext.CreatedLanguages.Remove(language);
         }
 
-        #endregion
-
-
-        #region 6. Duplicate Language Validation
+       
 
         /*
          * Used when testing the same language and level again.
@@ -230,10 +221,7 @@ namespace qa_dotnet_cucumber.Steps
             );
         }
 
-        #endregion
-
-
-        #region 7. Required-Field Validation
+      
 
         /*
          * Empty Language field test.
@@ -290,14 +278,14 @@ namespace qa_dotnet_cucumber.Steps
             );
         }
 
-        #endregion
+        
 
         /*
             Update a language to an existing langauage
          */
 
         [When(@"I update the language ""(.*)"" to ""(.*)"" with level ""(.*)""")]
-        public void WhenIUpdateTheLanguageToExistingLanguage(string languageToUpdate,string existingLanguage, string level)
+        public void WhenIUpdateTheLanguageToExistingLanguage(string languageToUpdate, string existingLanguage, string level)
         {
             _languagePage.EditLanguage(
                 languageToUpdate,
@@ -323,10 +311,9 @@ namespace qa_dotnet_cucumber.Steps
         }
 
 
-        #region 8. Destructive Testing - Very Large Input
+        //Destructive Testing - Very Large Input
 
-        [When(
-            @"I add a language containing ""(.*)"" characters with level ""(.*)""")]
+        [When(@"I add a language containing ""(.*)"" characters with level ""(.*)""")]
         public void WhenIAddALanguageContainingCharacters(
             int characterCount,
             string level)
@@ -341,8 +328,7 @@ namespace qa_dotnet_cucumber.Steps
             _testDataContext.CurrentLanguage = longLanguage;
         }
 
-        [Then(
-            @"the very large language should be displayed with level ""(.*)""")]
+        [Then(@"the very large language should be displayed with level ""(.*)""")]
         public void ThenTheVeryLargeLanguageShouldBeDisplayedWithLevel(
             string level)
         {
@@ -372,7 +358,7 @@ namespace qa_dotnet_cucumber.Steps
             );
         }
 
-        #endregion
+        
 
         //update empty language
         [When(@"I try to update the language ""(.*)"" with an empty language field")]
@@ -468,7 +454,7 @@ namespace qa_dotnet_cucumber.Steps
             );
         }
 
-        #region 9. Private Helper Methods
+        //Private Helper Methods
 
         private void RememberCurrentLanguageRowCount()
         {
@@ -495,6 +481,5 @@ namespace qa_dotnet_cucumber.Steps
                 ?? string.Empty;
         }
 
-        #endregion
     }
 }
