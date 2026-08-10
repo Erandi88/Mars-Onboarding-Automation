@@ -14,7 +14,7 @@ namespace qa_dotnet_cucumber.Pages
         private readonly By LanguageLevelDropdown = By.XPath("//select[@name='level']");
         private readonly By AddButton = By.XPath("//input[@value='Add']");
         private readonly By UpdateButton = By.XPath("//input[@value='Update']");
-
+        private readonly By CancelButton = By.XPath("//div[contains(@class,'active')]//input[@value='Cancel']");
         public LanguagePage(IWebDriver driver)
         {
             _driver = driver;
@@ -55,6 +55,13 @@ namespace qa_dotnet_cucumber.Pages
             ClickAddButton();
         }
 
+        public void AddLanguageWithoutLevel(string language)
+        {
+            ClickAddNewButton();
+            EnterLanguage(language);
+            ClickAddButton();
+        }
+
         public bool IsLanguageDisplayed(string language)
         {
             try
@@ -63,6 +70,25 @@ namespace qa_dotnet_cucumber.Pages
                 return _wait.Until(ExpectedConditions.ElementIsVisible(languageRow)).Displayed;
             }
             catch
+            {
+                return false;
+            }
+        }
+
+        public bool IsLanguageAndLevelDisplayed(string language, string level)
+        {
+            try
+            {
+                var languageRow = By.XPath(
+                    $"//div[contains(@class,'active')]//tr[" + 
+                    $"td[normalize-space()='{language}'] and " +
+                    $"td[normalize-space()='{level}']]"
+                );
+
+                return _wait
+                    .Until(ExpectedConditions.ElementIsVisible(languageRow)).Displayed;
+            }
+            catch (WebDriverTimeoutException)
             {
                 return false;
             }
@@ -129,7 +155,208 @@ namespace qa_dotnet_cucumber.Pages
             if (IsLanguageDisplayed(language))
             {
                 DeleteLanguage(language);
+
+                if (!IsLanguageRemoved(language))
+                {
+                    throw new WebDriverTimeoutException(
+                        $"The language '{language}' was not removed during cleanup."
+                    );
+                }
             }
+        }
+
+
+        public bool IsDuplicateLanguageMessageDisplayed()
+        {
+            try
+            {
+                var duplicateMessage = By.XPath(
+                    "//*[normalize-space()='This language is already exist in your language list.']"
+                );
+
+                return _wait
+                    .Until(ExpectedConditions.ElementIsVisible(duplicateMessage))
+                    .Displayed;
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+        }
+
+        public int GetLanguageRecordCount(string language, string level)
+        {
+            var matchingRows = By.XPath(
+                $"//div[contains(@class,'active')]//tr[" +
+                $"td[normalize-space()='{language}'] and " +
+                $"td[normalize-space()='{level}']]"
+            );
+
+            return _driver.FindElements(matchingRows).Count;
+        }
+
+        // returns the current number of language records.
+        public int GetLanguageRowCount()
+        {
+            var languageRows = By.XPath(
+                "//div[contains(@class,'active')]//table/tbody/tr"
+            );
+
+            return _driver.FindElements(languageRows).Count;
+        }
+
+        public bool IsLanguageValidationMessageDisplayed()
+        {
+            try
+            {
+                var validationMessage = By.XPath(
+                    "//*[normalize-space()='Please enter language and level']"
+                );
+
+                return _wait
+                    .Until(ExpectedConditions.ElementIsVisible(validationMessage))
+                    .Displayed;
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+        }
+
+        public int GetLanguageRecordCount(string language)
+        {
+            var matchingRows = By.XPath(
+                $"//div[contains(@class,'active')]//tr[" +
+                $"td[normalize-space()='{language}']]"
+            );
+
+            return _driver.FindElements(matchingRows).Count;
+        }
+
+        public bool IsDuplicatedDataMessageDisplayed()
+        {
+            try
+            {
+                var duplicatedDataMessage = By.XPath(
+                    "//*[normalize-space()='Duplicated data']"
+                );
+
+                return _wait
+                    .Until(ExpectedConditions.ElementIsVisible(duplicatedDataMessage))
+                    .Displayed;
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+        }
+
+        public bool IsAddNewButtonAvailable()
+        {
+            try
+            {
+                return _wait
+                    .Until(ExpectedConditions.ElementToBeClickable(AddNewButton))
+                    .Displayed;
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+        }
+
+        public bool IsLanguageAlreadyAddedMessageDisplayed()
+        {
+            try
+            {
+                var message = By.XPath(
+                    "//*[normalize-space()='This language is already added to your language list.']"
+                );
+
+                return _wait
+                    .Until(ExpectedConditions.ElementIsVisible(message))
+                    .Displayed;
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+        }
+
+        public void ClickCancelButton()
+        {
+            var cancelButton = _wait.Until(
+                ExpectedConditions.ElementToBeClickable(CancelButton)
+            );
+
+            cancelButton.Click();
+        }
+
+        public void ClearLanguageField()
+        {
+            var languageInput = _wait.Until(
+                ExpectedConditions.ElementIsVisible(LanguageField)
+            );
+
+            languageInput.Click();
+            languageInput.SendKeys(Keys.Control + "a");
+            languageInput.SendKeys(Keys.Backspace);
+
+            _wait.Until(driver =>
+                string.IsNullOrEmpty(languageInput.GetAttribute("value"))
+            );
+        }
+
+        public string GetLanguageFieldValue()
+        {
+            var languageInput = _wait.Until(
+                ExpectedConditions.ElementIsVisible(LanguageField)
+            );
+
+            return languageInput.GetAttribute("value") ?? string.Empty;
+        }
+
+        public void SelectEmptyLanguageLevel()
+        {
+            var dropdownElement = _wait.Until(
+                ExpectedConditions.ElementIsVisible(LanguageLevelDropdown)
+            );
+
+            var selectElement = new SelectElement(dropdownElement);
+
+            selectElement.SelectByIndex(0);
+        }
+
+        public void EditLanguageWithEmptyLevel(string currentLanguage)
+        {
+            ClickEditLanguage(currentLanguage);
+            SelectEmptyLanguageLevel();
+            ClickUpdateButton();
+        }
+
+        /* Boundary test */
+
+        public bool WaitForLanguageRowCount(int expectedCount)
+        {
+            try
+            {
+                return _wait.Until(driver =>
+                    GetLanguageRowCount() == expectedCount
+                );
+            }
+            catch (WebDriverTimeoutException)
+            {
+                return false;
+            }
+        }
+
+        public bool IsAddNewButtonDisplay()
+        {
+            var buttons = _driver.FindElements(AddNewButton);
+
+            return buttons.Any(button =>
+                button.Displayed && button.Enabled
+            );
         }
 
     }
